@@ -1,15 +1,98 @@
-﻿// See https://aka.ms/new-console-template for more information
-using DemoWork;
-using DemoWork.Abstract;
+﻿
+AnkaraPizzaStore aps=new AnkaraPizzaStore();
+IstanbulPizzaStore ips=new IstanbulPizzaStore();
 
-Console.WriteLine("Hello, World!");
+IPizza cheesePizza = aps.OrderPizza("cheese");
+Console.WriteLine("Cheese pizza ordered in Ankara Store.");
 
-Creator creator = new Creator();
+IPizza veggiPizza = ips.OrderPizza("veggi");
+Console.WriteLine("Veggi pizza ordered in Istanbul Store.");
 
-Screen screenWindows = creator.ScreenFactory(DemoWork.Enums.ScreenModel.Windows);
-Screen screenWeb = creator.ScreenFactory(DemoWork.Enums.ScreenModel.Web);
-Screen screenMobile = creator.ScreenFactory(DemoWork.Enums.ScreenModel.Mobile);
 
-screenWindows.Draw();
 
-Console.ReadKey();
+interface IPizza
+{
+    void Prepare();
+
+    void Bake();
+
+    void Cut();
+}
+
+class CheesePizza : IPizza
+{
+    public void Prepare()
+    {
+        Console.WriteLine("Cheese pizza prepared.");
+    }
+
+    public void Bake()
+    {
+        Console.WriteLine("Cheese pizza baked.");
+    }
+
+    public void Cut()
+    {
+        Console.WriteLine("Cheese pizza cut.");
+    }
+}
+
+class VeggiPizza : IPizza
+{
+    public void Prepare()
+    {
+        Console.WriteLine("Veggi pizza prepared.");
+    }
+
+    public void Bake()
+    {
+        Console.WriteLine("Veggi pizza baked.");
+    }
+
+    public void Cut()
+    {
+        Console.WriteLine("Veggi pizza cut.");
+    }
+}
+
+abstract class PizzaStore
+{
+    protected abstract IPizza CreatePizza(string type);
+
+    public IPizza OrderPizza(string type)
+    {
+        IPizza pizza = CreatePizza(type);
+
+        pizza.Prepare();
+        pizza.Bake();
+        pizza.Cut();
+
+        return pizza;
+    }
+}
+
+class AnkaraPizzaStore : PizzaStore
+{
+    protected override IPizza CreatePizza(string type)
+    {
+        return type switch
+        {
+            "cheese"=>new CheesePizza(),
+            "veggi"=>new VeggiPizza(),
+            _=>throw new ArgumentException(nameof(type))
+        };
+    }
+}
+
+class IstanbulPizzaStore : PizzaStore
+{
+    protected override IPizza CreatePizza(string type)
+    {
+        return type switch
+        {
+            "cheese" => new CheesePizza(),
+            "veggi" => new VeggiPizza(),
+            _ => throw new ArgumentException(nameof(type))
+        };
+    }
+}
